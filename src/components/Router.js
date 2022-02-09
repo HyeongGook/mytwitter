@@ -2,7 +2,7 @@ import React, { useState } from "react";
 
 import {HashRouter as Router, Redirect, Route, Switch } from "react-router-dom";
 import Auth from "../routes/Auth";
-import Home from "../routes/Home";
+import MyCalendar from "../routes/Home";
 import Navigation from "components/Navigation";
 import Profile from "routes/Profile";
 
@@ -14,7 +14,7 @@ const AppRouter = ({ isLoggedIn }) => {
                 {isLoggedIn ? (
                     <>
                         <Route exact path="/">
-                            <Home />
+                            <MyCalendar />
                         </Route>
                         <Route exact path="/profile">
                             <Profile />

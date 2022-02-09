@@ -2,6 +2,10 @@ import { authService } from "fbase";
 import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
 GithubAuthProvider, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import React, { useState } from "react";
+import "routes/authc.css"
+import BackGroundVideo from 'main_login.mp4';
+import google from "google.png";
+import github from "github.png";
 
 const Auth = () => {
     const [email, setEmail] = useState("");
@@ -57,32 +61,34 @@ const Auth = () => {
 
     return (
         <div>
-            <form onSubmit={onSubmit}>
-                <input 
-                    name="email" 
-                    type="email" 
-                    placeholder="Email"
-                    required 
-                    value={email}
-                    onChange={onChange}
-                />
-                <input
-                    name="password"
-                    type="password" 
-                    placeholder="Password" 
-                    required 
-                    value={password}
-                    onChange={onChange}                   
-                />
-                <input type="submit" value={newAccount ? "Create Account" : "Log In"} />
-                {error}
-            </form>
-            <span onClick={toggleAccount}>
-                {newAccount ? "Log In" : "Create Account"} 
-            </span>
-            <div>
-                <button onClick = {onSocialClick} name="google">Continue with Google</button>
-               <button onClick = {onSocialClick} name="github">Continue with Github</button>
+            <video autoPlay loop muted
+                       style={{
+                           position: 'absolute',
+                           width: '100%',
+                           height: '100%',
+                           objectFit: "fill",
+                           right: "0px",
+                           left: "0px",
+                           top: "0px",
+                       }}>
+                    <source src={BackGroundVideo} type="video/mp4"/>
+                </video>
+            
+            <div className="backGroundSet">
+                <div className="Login_Container">
+                    
+                    <div classname="Login_Title">
+                        <h1 id="fstyle_title">Every Calendar</h1>
+                        <h3 id="fstyle_subtitle">시간을 잘 쓰는 가장 빠른 방법</h3>
+                    </div>
+                    
+                    <div classname="Login_form">
+                        <div>
+                            <button onClick = {onSocialClick} name="google" classname="googlebutton"></button>
+                            <button onClick = {onSocialClick} name="github" classname="githubbutton"></button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     );

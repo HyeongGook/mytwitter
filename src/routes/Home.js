@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import Modal from 'react-modal';
+import DatePicker from "react-datepicker";
 
 const MyCalendar = () => {
   moment.locale('ko-KR');
@@ -10,8 +11,7 @@ const MyCalendar = () => {
   const [makeModal, setMakeModal] = useState(false);
   const [changeModal, setChangeModal] = useState(false);
   const [name, setName] = useState("");
-  const [events,addEvent] = useState([]);
-  const [codenum, setCodeNum] = useState(0);
+  const [events,setEvents] = useState([]);
  
   const [dayS,setDayS] = useState(0);
   const [monS,setMonS] = useState(0);
@@ -22,18 +22,36 @@ const MyCalendar = () => {
 
   const [start, setStart] = useState(true);
   const [makeMode, setMake] = useState(false);
+  const [tempId, setTempId] = useState(0);
+  const nextId = useRef(0);
 
   const addSchedule = (yearS, monthS, dayS, yearE, monthE, dayE) => {
     const sch = {
-      id: current,
+      id: nextId.current,
       title: name,
       start: new Date(yearS, monthS, dayS),
       end: new Date(yearE, monthE, dayE),
       allday: true,
     };
-  addEvent(events.concat(sch));
-  setMakeModal(false);
+    console.log(sch.start);
+    
+    setEvents(events.concat(sch));
+    setMakeModal(false);
+    nextId.current += 1;
 }
+
+const deleteSchedule = () => {
+  setEvents(events.filter(sch => sch.id !== tempId));
+  setChangeModal(false);
+}
+
+const changeScheduleName = () => {
+  setEvents(events.map(sch => sch.id === tempId ? { ...sch, title: name } : sch));
+};
+
+const changeScheduleDate = () => {
+  setEvents(events.map(sch => sch.id === tempId ? { ...sch, title: name } : sch));
+};
 
 const onChangeMake = (event) => {
   setName(event.target.value);
@@ -67,6 +85,7 @@ const onChangeMake = (event) => {
               setMonS(e.start.getMonth());
               setYearS(e.start.getUTCFullYear());
               setStart(false);
+              console.log(e.start.getDate());
             } else {
               setDayE(e.start.getDate());
               setMonE(e.start.getMonth());
@@ -77,8 +96,9 @@ const onChangeMake = (event) => {
           }
         }}
         onSelectEvent= {(e) => {
+          setTempId(e.id);
           setChangeModal(true);
-          console.log(e);
+          console.log(tempId);
         }}
         startAccessor="start"
         endAccessor="end"
@@ -120,17 +140,23 @@ const onChangeMake = (event) => {
         isOpen = {changeModal}
         onRequestClose ={() => setChangeModal(false)}
       >
+        <h1>수정</h1>
         <form onSubmit={(event) => {event.preventDefault();
-        addSchedule(yearS,monS,dayS, yearE, monE, dayE+1)}}>
-          <h1>수정</h1> 
-          <input type = "text" placeholder='약속 이름을 입력하세요.' required onChange = {onChangeMake} />
+        changeScheduleName()}}>
+          <h2>일정 이름</h2>
+          <input type = "text" placeholder='수정할 약속 이름을 입력하세요.' required onChange = {onChangeMake} />
           <input type= "submit" value = "일정 이름수정" />
         </form>
         <form onSubmit={(event) => {event.preventDefault();
-        addSchedule(yearS,monS,dayS, yearE, monE, dayE+1)}}>
+        changeScheduleDate()}}>
+          <h2>일정 이름</h2>
+          <input type = "text" placeholder='수정할 약속 이름을 입력하세요.' required onChange = {onChangeMake} />
+          <input type= "submit" value = "일정 이름수정" />
+        </form>
+        <form onSubmit={(event) => {event.preventDefault();
+        deleteSchedule(tempId)}}>
           <h1>삭제</h1> 
-          <input type = "text" placeholder='약속 이름을 입력하세요.' required onChange = {onChangeMake} />
-          <input type= "submit" value = "일정추가" />
+          <input type= "submit" value = "일정 삭제" />
         </form>
       </Modal>
     </div>

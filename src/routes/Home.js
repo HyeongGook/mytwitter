@@ -4,6 +4,7 @@ import moment from 'moment';
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import Modal from 'react-modal';
 import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 const MyCalendar = () => {
   moment.locale('ko-KR');
@@ -13,27 +14,24 @@ const MyCalendar = () => {
   const [name, setName] = useState("");
   const [events,setEvents] = useState([]);
  
-  const [dayS,setDayS] = useState(0);
-  const [monS,setMonS] = useState(0);
-  const [yearS, setYearS] = useState(0);
-  const [dayE,setDayE] = useState(0);
-  const [monE,setMonE] = useState(0);
-  const [yearE, setYearE] = useState(0);
+  const [startDate, setStartDate] = useState(new Date(0, 0, 0));
+  const [endDate, setEndDate] = useState(new Date(0, 0, 0));
 
   const [start, setStart] = useState(true);
   const [makeMode, setMake] = useState(false);
   const [tempId, setTempId] = useState(0);
   const nextId = useRef(0);
 
-  const addSchedule = (yearS, monthS, dayS, yearE, monthE, dayE) => {
+  const addSchedule = () => {
     const sch = {
       id: nextId.current,
       title: name,
-      start: new Date(yearS, monthS, dayS),
-      end: new Date(yearE, monthE, dayE),
+      start: startDate,
+      end: new Date(endDate.getFullYear(),endDate.getMonth(),endDate.getDate() + 1),
       allday: true,
     };
-    console.log(sch.start);
+    console.log(startDate);
+    console.log(endDate);
     
     setEvents(events.concat(sch));
     setMakeModal(false);
@@ -47,10 +45,13 @@ const deleteSchedule = () => {
 
 const changeScheduleName = () => {
   setEvents(events.map(sch => sch.id === tempId ? { ...sch, title: name } : sch));
+  setChangeModal(false);
 };
 
 const changeScheduleDate = () => {
-  setEvents(events.map(sch => sch.id === tempId ? { ...sch, title: name } : sch));
+  setEvents(events.map(sch => sch.id === tempId ? { ...sch, start: startDate } : sch));
+  setEvents(events.map(sch => sch.id === tempId ? { ...sch, end: new Date(endDate.getFullYear(),endDate.getMonth(),endDate.getDate() + 1) } : sch));
+  setChangeModal(false);
 };
 
 const onChangeMake = (event) => {
@@ -81,15 +82,10 @@ const onChangeMake = (event) => {
           {
             if(start)
             {
-              setDayS(e.start.getDate());
-              setMonS(e.start.getMonth());
-              setYearS(e.start.getUTCFullYear());
+              setStartDate(e.start);
               setStart(false);
-              console.log(e.start.getDate());
             } else {
-              setDayE(e.start.getDate());
-              setMonE(e.start.getMonth());
-              setYearE(e.start.getUTCFullYear());
+              setEndDate(e.start);
               setStart(true);
               setMakeModal(true);
             }
@@ -97,8 +93,9 @@ const onChangeMake = (event) => {
         }}
         onSelectEvent= {(e) => {
           setTempId(e.id);
+          setStartDate(e.start);
+          setEndDate(new Date(e.end.getFullYear(),e.end.getMonth(),e.end.getDate() - 1));
           setChangeModal(true);
-          console.log(tempId);
         }}
         startAccessor="start"
         endAccessor="end"
@@ -119,10 +116,11 @@ const onChangeMake = (event) => {
         onRequestClose ={() => setMakeModal(false)}
       >
         <form onSubmit={(event) => {event.preventDefault();
-        addSchedule(yearS,monS,dayS, yearE, monE, dayE+1)}}>
-          <h1>{yearS}-{monS}-{dayS} ~ {yearE}-{monE}-{dayE} 일정 등록</h1> 
+        addSchedule()}}>
+          <h1>일정 등록</h1> 
+          <h2>{startDate.getFullYear()}.{startDate.getMonth()+1}.{startDate.getDate()} ~ {endDate.getFullYear()}.{endDate.getMonth()+1}.{endDate.getDate()} 동안의 약속을 추가합니다.</h2>
           <input type = "text" placeholder='약속 이름을 입력하세요.' required onChange = {onChangeMake} />
-          <input type= "submit" value = "일정추가" />
+          <input type= "submit" value = "추가" />
       </form>
       </Modal>
       <Modal
@@ -145,18 +143,29 @@ const onChangeMake = (event) => {
         changeScheduleName()}}>
           <h2>일정 이름</h2>
           <input type = "text" placeholder='수정할 약속 이름을 입력하세요.' required onChange = {onChangeMake} />
-          <input type= "submit" value = "일정 이름수정" />
+          <input type= "submit" value = "수정" />
         </form>
         <form onSubmit={(event) => {event.preventDefault();
         changeScheduleDate()}}>
-          <h2>일정 이름</h2>
-          <input type = "text" placeholder='수정할 약속 이름을 입력하세요.' required onChange = {onChangeMake} />
-          <input type= "submit" value = "일정 이름수정" />
+          <h2>일정 날짜</h2>
+          <DatePicker
+            selected={startDate}
+            onChange={(date) => {setStartDate(date)}}
+            dateFormat="yyyy/MM/dd"
+            >
+          </DatePicker>
+          <DatePicker
+            selected={endDate}
+            onChange={(date) => {setEndDate(date)}}
+            dateFormat="yyyy/MM/dd"
+            >
+          </DatePicker>
+          <input type= "submit" value = "수정" />
         </form>
         <form onSubmit={(event) => {event.preventDefault();
         deleteSchedule(tempId)}}>
           <h1>삭제</h1> 
-          <input type= "submit" value = "일정 삭제" />
+          <input type= "submit" value = "삭제" />
         </form>
       </Modal>
     </div>

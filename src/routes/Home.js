@@ -5,6 +5,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import Modal from 'react-modal';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import "routes/home.css"
 
 const MyCalendar = () => {
   moment.locale('ko-KR');
@@ -59,8 +60,7 @@ const onChangeMake = (event) => {
 }
   
   return (
-    <div>
-      <h1 id="fstyle_title">Every Calendar</h1>
+    <div className="bodystyle">
       <form>
         <input 
         type='radio' 
@@ -75,7 +75,8 @@ const onChangeMake = (event) => {
       <Calendar
         localizer={localizer}
         events={events}
-        style={{ height: 500 }}
+        style={{height: 500 }}
+        className="calMargin"
         selectable
         onSelectSlot= {(e) => {
           if(makeMode)
@@ -107,9 +108,9 @@ const onChangeMake = (event) => {
             zIndex : 4,
           },
           const : {
-            height : 800,
+            height : 100,
             width : 500,
-            left : 1100,
+            left : 110,
           }
         }}
         isOpen = {makeModal}
@@ -130,7 +131,7 @@ const onChangeMake = (event) => {
             zIndex : 4,
           },
           const : {
-            height : 800,
+            height : 600,
             width : 500,
             left : 1100,
           }

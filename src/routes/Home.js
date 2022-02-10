@@ -31,8 +31,6 @@ const MyCalendar = () => {
       end: new Date(endDate.getFullYear(),endDate.getMonth(),endDate.getDate() + 1),
       allday: true,
     };
-    console.log(startDate);
-    console.log(endDate);
     
     setEvents(events.concat(sch));
     setMakeModal(false);
@@ -65,7 +63,7 @@ const onChangeMake = (event) => {
         <input 
         type='radio' 
         name="radio" 
-        checked
+        defaultChecked
         onClick={() => setMake(false)} /> 일정 확인모드 
         <input 
         type='radio' 
@@ -113,7 +111,8 @@ const onChangeMake = (event) => {
             left : 110,
           }
         }}
-        isOpen = {makeModal}
+        isOpen = {makeModal} 
+        ariaHideApp={false}
         onRequestClose ={() => setMakeModal(false)}
       >
         <form onSubmit={(event) => {event.preventDefault();
@@ -136,6 +135,7 @@ const onChangeMake = (event) => {
             left : 1100,
           }
         }}
+        ariaHideApp={false}
         isOpen = {changeModal}
         onRequestClose ={() => setChangeModal(false)}
       >

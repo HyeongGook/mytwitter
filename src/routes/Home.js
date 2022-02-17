@@ -9,34 +9,26 @@ import "routes/home.css"
 import { dbService } from "fbase";
 import { getDocs, query, addDoc, collection } from "@firebase/firestore";
 
-const MyCalendar = () => {
+const MyCalendar = ( {userObj} ) => {
   moment.locale('ko-KR');
   const localizer = momentLocalizer(moment);
   const [makeModal, setMakeModal] = useState(false);
   const [changeModal, setChangeModal] = useState(false);
   const [name, setName] = useState("");
   const [events,setEvents] = useState([]);
- 
+  const [idR,setIdR] = useState(0);
+
   const [startDate, setStartDate] = useState(new Date(0, 0, 0));
   const [endDate, setEndDate] = useState(new Date(0, 0, 0));
 
   const [start, setStart] = useState(true);
   const [makeMode, setMake] = useState(false);
   const [tempId, setTempId] = useState(0);
-  const nextId = useRef(0);
-
-  const [sdD, setSdD] = useState("");
-  const [sdM, setSdM] = useState("");
-  const [sdY, setSdY] = useState("");
-  const [edD, setEdD] = useState("");
-  const [edM, setEdM] = useState("");
-  const [edY, setEdY] = useState("");
 
   useEffect(() => {getEvents(); }, []);
-
  
   const getEvents = async () => {
-    const q = query(collection(dbService, "events"));
+    const q = query(collection(dbService, userObj.uid));
     const dbEvents = await getDocs(q);
     dbEvents.forEach((doc) => {
       const temp = {
@@ -44,42 +36,33 @@ const MyCalendar = () => {
         title : doc.data().title,
         start : doc.data().start.toDate(),
         end : doc.data().end.toDate(),
+        dcId : doc.id
       }
       setEvents((prev) => [temp, ...prev]);
     });
   };
-  
-
-  const daysetting = () => {
-    setSdD(startDate.getDate().toString());
-    setSdM(startDate.getMonth().toString());
-    setSdY(startDate.getFullYear().toString());
-    setEdD(endDate.getDate().toString());
-    setEdM(endDate.getMonth().toString());
-    setEdY(endDate.getFullYear().toString());
-  };
 
   const addSchedule = async () => {
     const sch = {
-      id: nextId.current,
+      id: idR,
       title: name,
       start: startDate,
       end: new Date(endDate.getFullYear(),endDate.getMonth(),endDate.getDate() + 1),
       allday: true,
     };
     setEvents(events.concat(sch));
-    await addDoc(collection(dbService,"events"), {
+    await addDoc(collection(dbService, userObj.uid), {
       id : sch.id,
       title : sch.title,
       start : sch.start,
       end: sch.end,
     });
     setMakeModal(false);
-    nextId.current += 1;
   }
 
 const deleteSchedule = () => {
   setEvents(events.filter(sch => sch.id !== tempId));
+
   setChangeModal(false);
 }
 
@@ -127,6 +110,7 @@ const onChangeMake = (event) => {
               setStart(false);
             } else {
               setEndDate(e.start);
+              setIdR(Math.floor(Math.random() * 10000));
               setStart(true);
               setMakeModal(true);
             }
@@ -153,7 +137,7 @@ const onChangeMake = (event) => {
             left : 110,
           }
         }}
-        isOpen = {makeModal} 
+        isOpen = {makeModal}
         ariaHideApp={false}
         onRequestClose ={() => setMakeModal(false)}
       >
@@ -214,6 +198,5 @@ const onChangeMake = (event) => {
     </div>
   )
 }
-
 
 export default MyCalendar; 

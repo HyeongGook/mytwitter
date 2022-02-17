@@ -6,7 +6,7 @@ import MyCalendar from "../routes/Home";
 import Navigation from "components/Navigation";
 import Profile from "routes/Profile";
 
-const AppRouter = ({ isLoggedIn }) => {
+const AppRouter = ({ isLoggedIn, userObj }) => {
     return (
         <Router>
             {isLoggedIn && <Navigation />}
@@ -14,7 +14,7 @@ const AppRouter = ({ isLoggedIn }) => {
                 {isLoggedIn ? (
                     <>
                         <Route exact path="/">
-                            <MyCalendar />
+                            <MyCalendar userObj={userObj} />
                         </Route>
                         <Route exact path="/profile">
                             <Profile />

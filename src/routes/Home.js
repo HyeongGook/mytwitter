@@ -7,7 +7,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "routes/home.css"
 import { dbService } from "fbase";
-import { getDocs, query, addDoc, collection } from "@firebase/firestore";
+import { getDocs, query, deleteDoc, setDoc, updateDoc, collection, doc } from "@firebase/firestore";
 
 const MyCalendar = ( {userObj} ) => {
   moment.locale('ko-KR');
@@ -28,7 +28,7 @@ const MyCalendar = ( {userObj} ) => {
   useEffect(() => {getEvents(); }, []);
  
   const getEvents = async () => {
-    const q = query(collection(dbService, userObj.uid));
+    const q = query(collection(dbService, userObj.email + " event"));
     const dbEvents = await getDocs(q);
     dbEvents.forEach((doc) => {
       const temp = {
@@ -51,7 +51,7 @@ const MyCalendar = ( {userObj} ) => {
       allday: true,
     };
     setEvents(events.concat(sch));
-    await addDoc(collection(dbService, userObj.uid), {
+    await setDoc(doc(dbService, userObj.email + " event", idR.toString()), {
       id : sch.id,
       title : sch.title,
       start : sch.start,
@@ -60,20 +60,27 @@ const MyCalendar = ( {userObj} ) => {
     setMakeModal(false);
   }
 
-const deleteSchedule = () => {
+const deleteSchedule = async () => {
   setEvents(events.filter(sch => sch.id !== tempId));
-
+  await deleteDoc(doc(dbService, userObj.email + " event", tempId.toString()));
   setChangeModal(false);
 }
 
-const changeScheduleName = () => {
+const changeScheduleName = async () => {
   setEvents(events.map(sch => sch.id === tempId ? { ...sch, title: name } : sch));
+  updateDoc(doc(dbService, userObj.email + " event", tempId.toString()), {
+    name : name,
+  });
   setChangeModal(false);
 };
 
-const changeScheduleDate = () => {
+const changeScheduleDate = async () => {
   setEvents(events.map(sch => sch.id === tempId ? { ...sch, start: startDate } : sch));
   setEvents(events.map(sch => sch.id === tempId ? { ...sch, end: new Date(endDate.getFullYear(),endDate.getMonth(),endDate.getDate() + 1) } : sch));
+  updateDoc(doc(dbService, userObj.email + " event", tempId.toString()), {
+    start: startDate,
+    end: new Date(endDate.getFullYear(),endDate.getMonth(),endDate.getDate() + 1),
+  });
   setChangeModal(false);
 };
 
@@ -110,7 +117,7 @@ const onChangeMake = (event) => {
               setStart(false);
             } else {
               setEndDate(e.start);
-              setIdR(Math.floor(Math.random() * 10000));
+              setIdR(Math.floor(Math.random() * 100000000));
               setStart(true);
               setMakeModal(true);
             }

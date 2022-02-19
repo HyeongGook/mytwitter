@@ -8,7 +8,7 @@ import "routes/home.css"
 export default () => {
     const onLogOutClick = () => authService.signOut();
     return (
-        <div classname="bodystyle">
+        <div className="bodystyle">
             <button onClick={onLogOutClick}>Log Out</button>
         </div>
     );

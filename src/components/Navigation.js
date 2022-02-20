@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import "components/navigation.css"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCalendarDays, faAddressBook } from "@fortawesome/free-solid-svg-icons";
+import { faUser, faCalendarDays, faAddressBook } from "@fortawesome/free-solid-svg-icons";
 
 const Navigation = () => (
     <header>
@@ -16,6 +16,11 @@ const Navigation = () => (
                 </li>
                 <li>
                     <Link to="/profile">
+                    <FontAwesomeIcon icon={faUser} className="btMargin" color="white" size="3x" />
+                    </Link>
+                </li>
+                <li>
+                    <Link to="/plusFriend">
                     <FontAwesomeIcon icon={faAddressBook} className="btMargin" color="white" size="3x" />
                     </Link>
                 </li>

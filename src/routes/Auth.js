@@ -33,24 +33,19 @@ const Auth = () => {
 
             } else {
                 data = await signInWithEmailAndPassword(auth, email, password);
-
             }
-            console.log(data);
         } catch (error) {
-            //console.log(error);
-            //setError(error.message);
+            console.log(error);
         }
     }
 
     const toggleAccount = () => setNewAccount(prev => !prev);
-  
+    
     const onSocialClick = async (event) => {
         const {target:{name}} = event;
         let provider;
         if(name === "google") {
             provider = new GoogleAuthProvider();
-            //const result = await signInWithPopup(authService, provider);
-            //const credential = GoogleAuthProvider.credentialFromResult(result);
 
         } else if (name === "github") {
             provider = new GithubAuthProvider();
@@ -79,30 +74,40 @@ const Auth = () => {
                     <h1 id="fstyle_title">Every Calendar</h1>
                     <h3 id="fstyle_subtitle">시간을 잘 쓰는 가장 빠른 방법</h3>
                     
-                    <div classname="Login_form">
+                    <div>
                         <button onClick = {onSocialClick}  name="google" className="googleBt"></button>
                         <button onClick = {onSocialClick} name="github" className="githubBt"></button>
-                        <button onClick = {() => setLogin(true), () => setNewAccount(false)} className="googleBt"></button>
-                        <button onClick = {() => setCreate(true), () => setNewAccount(true)} className="githubBt"></button>
+                        <button onClick = {() => {setLogin(true); setNewAccount(false)}} className="emailBt"></button>
                     </div>
+                    <button onClick = {() => {setCreate(true); setNewAccount(true)}} id ="fstyle_subtitle" className="createBt" >새로 시작하기</button>
                 </div>
             </div>
             <Modal
                 style = {{
-                overlay : {
-                    backgroundColor : "rgba(0,0,0,0.3)",
-                    zIndex : 4,
-                },
-                const : {
-                    height : 500,
-                    width : 500,
-                    left : 1100,
-                }
-                }}
+                    overlay : {
+                        position: "fixed",
+                        top: 300,
+                        left: 700,
+                        right: 700,
+                        bottom: 300,
+                        backgroundColor : "rgba(0,0,0,0.3)",
+                        zIndex : 4,
+                    },
+                    const : {
+                        //position: "absolute",
+                        //top : '10px',
+                        //left : '10px',
+                        //right: '10px',
+                        //bottom: '10px',
+                        //border: "10px solid #ccc",
+                        //overflow: "auto",
+                    }
+                    }}
                 ariaHideApp={false}
                 isOpen = {login}
                 onRequestClose ={() => setLogin(false)}
             >
+                <button onClick ={() => setLogin(false)} >"X"</button>
                 <form onSubmit={onSubmit}>
                     <input 
                         name="email" 
@@ -125,16 +130,25 @@ const Auth = () => {
             </Modal>
             <Modal
                 style = {{
-                overlay : {
-                    backgroundColor : "rgba(0,0,0,0.3)",
-                    zIndex : 4,
-                },
-                const : {
-                    height : 500,
-                    width : 500,
-                    left : 1100,
-                }
-                }}
+                    overlay : {
+                        position: "fixed",
+                        top: 300,
+                        left: 700,
+                        right: 700,
+                        bottom: 300,
+                        backgroundColor : "rgba(0,0,0,0.3)",
+                        zIndex : 4,
+                    },
+                    const : {
+                        position: "absolute",
+                        top : '10px',
+                        left : '10px',
+                        right: '10px',
+                        bottom: '10px',
+                        border: "10px solid #ccc",
+                        overflow: "auto",
+                    }
+                    }}
                 ariaHideApp={false}
                 isOpen = {create}
                 onRequestClose ={() => setCreate(false)}
